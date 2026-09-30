@@ -20,6 +20,7 @@ public class CustoService {
     public Custo registrarCusto(double valor, String descricao, String data,
                                 Categoria categoria, Departamento departamento,
                                 Funcionario funcionario) {
+        CustoValidator.validar(valor, descricao, data, categoria, departamento, funcionario);
         Custo custo = new Custo(proximoId, valor, descricao, data,
                 categoria, departamento, funcionario);
         custos.add(custo);
