@@ -31,4 +31,13 @@ public class CustoService {
     public List<Custo> getCustos() {
         return new ArrayList<>(custos);
     }
+
+    /**
+     * Remove um custo pelo seu ID.
+     * @param id identificador do custo
+     * @return true se o custo foi encontrado e removido, false caso contrário
+     */
+    public boolean excluirCusto(int id) {
+        return custos.removeIf(c -> c.getId() == id);
+    }
 }
