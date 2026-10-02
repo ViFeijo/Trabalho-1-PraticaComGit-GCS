@@ -1,75 +1,45 @@
-# React + TypeScript + Vite
+# GCS — interface modular
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Base de funcionários e estrutura compartilhada em React + TypeScript + Vite.
 
-Currently, two official plugins are available:
+## Executar
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Dentro de `front/trab-1`:
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```sh
+npm ci
+npm run dev
+npm run build
+npm run lint
+node --test tests/*.test.ts
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+Os testes usam o suporte nativo a TypeScript do Node 22.18+ (validado com Node 25).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Módulos
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+`src/App.tsx` descobre `src/modules/*/module.tsx`. Cada módulo declara `id`, `label`,
+`order` e, opcionalmente, `Page`, `Header` ou `CostAction`. Não é necessário editar
+App para instalar uma funcionalidade. A base inclui somente a página de funcionários;
+instale os demais módulos copiando os arquivos de cada pacote após disponibilizar a base.
 
-```
+`src/core` contém os modelos compatíveis com a dev, dados de exemplo, formatação e
+estado compartilhado. Regras de cada funcionalidade ficam em seu próprio serviço.
+Não há API HTTP, autenticação ou persistência. Recarregar restaura os exemplos.
+
+O backend atual usa `id`, `nome`, `cargo` e `departamento` para funcionário.
+A matrícula mencionada no PDF não foi acrescentada ao modelo de outro integrante.
+Os exemplos conservam as datas do seed (setembro de 2026); meses sem custos mostram zero.
+
+Para navegar e demonstrar o sistema completo, aplique também os módulos dos outros pacotes.
+A integração definitiva com Java substituirá os adaptadores mock; não existe rota HTTP pronta.
+
+## Visual básico
+
+Interface em Arial, fundo branco, texto preto e bordas/ícones verdes (#008000),
+sem arredondamentos, subtítulos decorativos ou favicon. Os ícones vêm apenas de
+`react-icons/fi`; não há arquivos SVG próprios. Rode `npm ci` após copiar o pacote
+atualizado do integrante 8, que inclui package.json e package-lock.json.
+
+Ao atualizar a versão anterior, exclua `public/favicon.svg`, `public/icons.svg`
+e `src/index.css` (legado não utilizado), conforme MODIFICACOES.md.
