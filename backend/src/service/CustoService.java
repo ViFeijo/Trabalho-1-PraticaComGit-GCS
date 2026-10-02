@@ -28,7 +28,35 @@ public class CustoService {
     }
 
     public List<Custo> getCustos() {
-        return new ArrayList<>(custos);
+        List<Custo> lista = new ArrayList<>(custos);
+        ordenarPorMaisRecente(lista);
+        return lista;
+    }
+
+    public static void ordenarPorMaisRecente(List<Custo> lista) {
+        if (lista == null) {
+            return;
+        }
+        lista.sort((c1, c2) -> {
+            if (c1 == null && c2 == null)
+                return 0;
+            if (c1 == null)
+                return 1;
+            if (c2 == null)
+                return -1;
+            if (c1.getData() == null && c2.getData() == null) {
+                return Integer.compare(c2.getId(), c1.getId());
+            }
+            if (c1.getData() == null)
+                return 1;
+            if (c2.getData() == null)
+                return -1;
+            int dataComparison = c2.getData().compareTo(c1.getData());
+            if (dataComparison != 0) {
+                return dataComparison;
+            }
+            return Integer.compare(c2.getId(), c1.getId());
+        });
     }
 
     public List<Custo> pesquisarCustos(String descricao, Integer categoriaId, String data, Integer departamentoId) {
