@@ -53,4 +53,21 @@ public class FuncionarioService {
         }
         return null;
     }
+
+    public List<Funcionario> listarTodos() {
+        List<Funcionario> copia = new ArrayList<>(funcionarios);
+        copia.sort((a, b) -> a.getNome().compareToIgnoreCase(b.getNome()));
+        return copia;
+    }
+
+    public List<Funcionario> listarPorDepartamento(int departamentoId) {
+        List<Funcionario> resultado = new ArrayList<>();
+        for (Funcionario f : funcionarios) {
+            if (f.getDepartamento().getId() == departamentoId) {
+                resultado.add(f);
+            }
+        }
+        return resultado;
+    }
+
 }
