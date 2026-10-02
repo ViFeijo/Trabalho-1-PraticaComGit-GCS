@@ -83,4 +83,35 @@ public class CustoService {
     public List<Custo> pesquisarPorDepartamento(Departamento departamento) {
         return pesquisarCustos(null, null, null, departamento);
     }
+
+    /**
+     * Retorna o custo mais recente registrado no sistema.
+     * Em ordem cronológica de inserção, o mais recente é o último elemento da lista.
+     * @return Custo mais recente ou null se a lista estiver vazia
+     */
+    public Custo obterCustoMaisRecente() {
+        if (custos.isEmpty()) {
+            return null;
+        }
+        return custos.get(custos.size() - 1);
+    }
+
+    /**
+     * Remove um custo pelo seu ID, permitindo apenas a exclusão do custo mais recente.
+     * @param id identificador do custo a ser removido
+     * @return true se o custo foi removido com sucesso
+     * @throws IllegalStateException se não houver custos cadastrados
+     * @throws IllegalArgumentException se o ID não corresponder ao custo mais recente
+     */
+    public boolean excluirCusto(int id) {
+        if (custos.isEmpty()) {
+            throw new IllegalStateException("Nenhum custo cadastrado para exclusão.");
+        }
+
+        Custo maisRecente = obterCustoMaisRecente();
+        if (maisRecente.getId() != id) {
+            throw new IllegalArgumentException("Somente o custo mais recente pode ser excluído.");
+        }
+        return custos.removeIf(c -> c.getId() == id);
+    }
 }
