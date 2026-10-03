@@ -1,5 +1,5 @@
 import { FiPlus } from 'react-icons/fi'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Empty, Notice, PageHeading, Stat } from '../../components/ui.tsx'
 import { displayDate, money, sumCosts } from '../../core/format.ts'
 import { useAppState } from '../../core/store.ts'
@@ -17,18 +17,38 @@ export default function CostPage() {
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const trigger = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    let active = true
+    costService.fetchAll()
+      .catch(err => {
+        if (active) setError(err.message)
+      })
+    return () => { active = false }
+  }, [])
+
   const invalidRange = !!(filters.inicio && filters.fim && filters.inicio > filters.fim)
   const filtered = invalidRange ? [] : filterCosts(custos, filters)
   const latestId = sortCosts(custos)[0]?.id
+
   function close() { setAdding(false); requestAnimationFrame(() => trigger.current?.focus()) }
-  function remove(id: number) {
-    try { costService.remove(id); setMessage('Custo excluído com sucesso.'); setError('') }
-    catch (err) { setError((err as Error).message); setMessage('') }
-    setPendingDelete(null)
-    requestAnimationFrame(() => trigger.current?.focus())
+
+  async function remove(id: number) {
+    try {
+      await costService.remove(id)
+      setMessage('Custo excluído com sucesso.')
+      setError('')
+    } catch (err) {
+      setError((err as Error).message)
+      setMessage('')
+    } finally {
+      setPendingDelete(null)
+      requestAnimationFrame(() => trigger.current?.focus())
+    }
   }
+
   return <>
-    <PageHeading title="Custos" action={<button ref={trigger} className="button primary" disabled={adding} aria-expanded={adding} onClick={() => { setAdding(true); setMessage('') }}><FiPlus aria-hidden="true" /> Novo custo</button>} />
+    <PageHeading title="Custos" action={<button ref={trigger} className="button primary" disabled={adding} aria-expanded={adding} onClick={() => { setAdding(true); setMessage(''); setError('') }}><FiPlus aria-hidden="true" /> Novo custo</button>} />
     <div className="stats two"><Stat label="Total da seleção" value={money(sumCosts(filtered))} /><Stat label="Registros encontrados" value={filtered.length.toString().padStart(2, '0')} /></div>
     {!operadorId && <div className="notice warning">Selecione um operador no topo para cadastrar custos. A consulta continua disponível.</div>}
     <Notice message={message} /><Notice message={error || (invalidRange ? 'A data inicial deve ser anterior ou igual à final.' : '')} error />

@@ -1,6 +1,6 @@
 import type { Custo } from '../../core/models.ts'
+import { apiClient } from '../../core/apiClient.ts'
 
-// Contrato equivalente ao CsvExportService Java, sem necessidade de API HTTP.
 export interface CsvService { generate(custos: Custo[]): string }
 function cell(value: string | number) {
   let text = String(value)
@@ -27,4 +27,17 @@ export function downloadCsv(custos: Custo[]) {
   link.click()
   link.remove()
   setTimeout(() => URL.revokeObjectURL(url), 1000)
+}
+
+export async function downloadCsvFromApi(query?: string) {
+  const url = `/api/csv/export${query ? `?${query}` : ''}`
+  const blob = await apiClient.getBlob(url)
+  const downloadUrl = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = downloadUrl
+  link.download = 'custos.csv'
+  document.body.append(link)
+  link.click()
+  link.remove()
+  setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000)
 }

@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FiUsers, FiDollarSign, FiBarChart2, FiPieChart } from 'react-icons/fi'
 import type { AppModule } from './core/modules.ts'
 import { ModuleContext } from './core/moduleContext.ts'
+import { apiClient } from './core/apiClient.ts'
 
 const loaded = import.meta.glob<{ default: AppModule }>('./modules/*/module.tsx', { eager: true })
 const modules = Object.values(loaded).map(item => item.default).sort((a, b) => a.order - b.order)
@@ -12,6 +13,10 @@ export default function App() {
   const [active, setActive] = useState('employees')
   const current = pages.find(item => item.id === active) ?? pages[0]
   const Page = current?.Page
+
+  useEffect(() => {
+    apiClient.get('/api/seed').catch(() => {})
+  }, [])
 
   return <ModuleContext.Provider value={modules}>
     <header className="app-header">
