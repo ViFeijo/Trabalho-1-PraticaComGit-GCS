@@ -114,14 +114,15 @@ public class CustoService {
 
     /**
      * Retorna o custo mais recente registrado no sistema.
-     * Em ordem cronológica de inserção, o mais recente é o último elemento da lista.
+     * Considera a data do custo (mais recente cronologicamente) e o ID como critério de desempate.
      * @return Custo mais recente ou null se a lista estiver vazia
      */
     public Custo obterCustoMaisRecente() {
         if (custos.isEmpty()) {
             return null;
         }
-        return custos.get(custos.size() - 1);
+        List<Custo> ordenados = getCustos();
+        return ordenados.get(0);
     }
 
     /**

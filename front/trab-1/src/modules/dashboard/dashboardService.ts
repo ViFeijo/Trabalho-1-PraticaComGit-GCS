@@ -2,7 +2,7 @@ import type { Custo } from '../../core/models.ts'
 import { departamentos } from '../../core/seed.ts'
 import { sumCosts } from '../../core/format.ts'
 
-// Adaptador demonstrativo: substituir pela resposta do backend dos integrantes 7.
+// Adaptador alinhado com o contrato e regras de negócio do DashboardService do backend (ranking top 3 e trimestre [2, 1, 0]).
 export function getDashboard(custos: Custo[], now = new Date()) {
   const months = [2, 1, 0].map(offset => {
     const date = new Date(now.getFullYear(), now.getMonth() - offset, 1)

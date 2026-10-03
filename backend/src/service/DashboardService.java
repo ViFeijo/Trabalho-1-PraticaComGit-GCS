@@ -64,7 +64,7 @@ public class DashboardService {
         double totalMesAtual = totalPorMes.getOrDefault(mesAtual, 0.0);
 
         List<TotaisMes> meses = new ArrayList<>();
-        for (int deslocamento = 3; deslocamento >= 1; deslocamento--) {
+        for (int deslocamento = 2; deslocamento >= 0; deslocamento--) {
             YearMonth mes = mesAtual.minusMonths(deslocamento);
             Map<Integer, Double> porDepartamento =
                     totalPorMesEDepartamento.getOrDefault(mes, new HashMap<>());
@@ -78,7 +78,45 @@ public class DashboardService {
             meses.add(new TotaisMes(mes.getYear(), mes.getMonthValue(), totais));
         }
 
-        return new ResumoDashboard(totalMesAtual, meses);
+        List<RankingFuncionario> ranking = calcularRanking(custos);
+
+        return new ResumoDashboard(totalMesAtual, meses, ranking);
+    }
+
+    public List<RankingFuncionario> calcularRanking(List<Custo> custos) {
+        if (custos == null) {
+            throw new IllegalArgumentException("A lista de custos é obrigatória.");
+        }
+
+        Map<Integer, Funcionario> funcionariosPorId = new HashMap<>();
+        Map<Integer, Double> totalPorFuncionario = new HashMap<>();
+
+        for (Custo c : custos) {
+            if (c == null || c.getFuncionario() == null) {
+                continue;
+            }
+            Funcionario f = c.getFuncionario();
+            funcionariosPorId.putIfAbsent(f.getId(), f);
+            totalPorFuncionario.merge(f.getId(), c.getValor(), Double::sum);
+        }
+
+        List<RankingFuncionario> ranking = new ArrayList<>();
+        for (Map.Entry<Integer, Double> entry : totalPorFuncionario.entrySet()) {
+            ranking.add(new RankingFuncionario(funcionariosPorId.get(entry.getKey()), entry.getValue()));
+        }
+
+        ranking.sort((r1, r2) -> {
+            int comp = Double.compare(r2.getTotal(), r1.getTotal());
+            if (comp != 0) {
+                return comp;
+            }
+            return Integer.compare(r1.getFuncionario().getId(), r2.getFuncionario().getId());
+        });
+
+        if (ranking.size() > 3) {
+            return new ArrayList<>(ranking.subList(0, 3));
+        }
+        return ranking;
     }
 
     private YearMonth interpretarMes(String data) {
