@@ -1,0 +1,4 @@
+.operator { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+.operator label { display: block; }
+.operator small { display: block; margin-top: 4px; font-size: 14px; }
+.operator select { width: 230px; max-width: 100%; }
