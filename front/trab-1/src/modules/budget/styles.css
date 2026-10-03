@@ -1,0 +1,14 @@
+.budget-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.budget-form { grid-template-columns: 1fr 1fr auto; align-items: end; }
+.budget-card { padding: 16px; }
+.budget-card-heading { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+.budget-consumption { font-weight: bold; font-size: 20px; }
+.budget-consumption small { display: block; margin-top: 5px; font-size: 14px; font-weight: normal; }
+.progress { height: 10px; border: 1px solid var(--green); }
+.progress span { display: block; background: var(--green); height: 100%; }
+.budget-details { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-top: 16px; }
+.budget-details strong { display: block; margin-top: 5px; }
+.budget-note { font-size: 14px; }
+@media (max-width: 760px) {
+  .budget-grid, .budget-form { grid-template-columns: 1fr; }
+}
