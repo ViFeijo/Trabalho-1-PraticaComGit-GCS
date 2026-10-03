@@ -1,9 +1,23 @@
-import type { Custo } from '../../core/models.ts'
+import type { Custo, Departamento, Funcionario } from '../../core/models.ts'
 import { departamentos } from '../../core/seed.ts'
 import { sumCosts } from '../../core/format.ts'
+import { apiClient } from '../../core/apiClient.ts'
+
+export interface DashboardData {
+  months: { key: string; label: string }[]
+  total: number
+  count: number
+  ranking: { funcionario: Funcionario; total: number }[]
+  departments: { departamento: Departamento; values: number[] }[]
+}
+
+export async function fetchDashboard(referencia?: string): Promise<DashboardData> {
+  const query = referencia ? `?referencia=${encodeURIComponent(referencia)}` : ''
+  return await apiClient.get<DashboardData>(`/api/dashboard${query}`)
+}
 
 // Adaptador alinhado com o contrato e regras de negócio do DashboardService do backend (ranking top 3 e trimestre [2, 1, 0]).
-export function getDashboard(custos: Custo[], now = new Date()) {
+export function getDashboard(custos: Custo[], now = new Date()): DashboardData {
   const months = [2, 1, 0].map(offset => {
     const date = new Date(now.getFullYear(), now.getMonth() - offset, 1)
     return { key: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`, label: date.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' }) }
